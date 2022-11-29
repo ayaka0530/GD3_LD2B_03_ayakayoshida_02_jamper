@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Floor : MonoBehaviour
 {
+    private int floorCount;
     public float floorLength = 0;
 
     // Start is called before the first frame update
@@ -17,4 +18,15 @@ public class Floor : MonoBehaviour
     {
         
     }
+
+    public float TeachFloorLength() 
+    {
+        return floorLength;
+    }
+
+    public void AddFloorLength() 
+    {
+        floorCount = floorCount + 1;
+    }
+
 }
