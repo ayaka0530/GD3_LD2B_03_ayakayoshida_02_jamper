@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
 
     public bool isScaffold = false;//足場のフラグ
     public GameObject floor;
+    public GameObject oldFloorPos;//前の床の位置
+    public GameObject newFloorPos;//今の床の位置
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +46,6 @@ public class Player : MonoBehaviour
             {
                 float floorGap;
                 floorGap = Camera.main.transform.position.y - floor.transform.position.y;
-                
 
             }
         }
@@ -65,13 +66,16 @@ public class Player : MonoBehaviour
             isScaffold = false;
         }
 
-        else if(other.gameObject.tag == "Scaffold") 
+        else if(other.gameObject.tag == "Scaffold"　&& oldFloorPos != other.gameObject && newFloorPos.transform.y　> oldFloorPos.transform.y) 
         {
             jumpCount = 0;
             isScaffold = true;
+            if(isScaffold == true) 
+            {
+
+                isScaffold = false;
+            }
         }
 
     }
-
-
 }
