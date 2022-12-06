@@ -5,16 +5,16 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rbody2D;
-
     private float speed = 0.05f;
-
     private int jumpCount = 0;
     private float jumpForce = 25f;
 
+
     public bool isScaffold = false;//足場のフラグ
     public GameObject floor;
-    public GameObject oldFloorPos;//前の床の位置
-    public GameObject newFloorPos;//今の床の位置
+    public GameObject oldFloor;//前の床のゲームオブジェクト
+    public Vector2 oldFloorPos;//前の床の位置
+
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
         {
             position.x += speed;
         }
+
         if (Input.GetKeyDown(KeyCode.Space) && this.jumpCount < 1)
         {
             //this.rbody2D.AddForce(transform.up * jumpForce);
@@ -47,6 +48,10 @@ public class Player : MonoBehaviour
                 float floorGap;
                 floorGap = Camera.main.transform.position.y - floor.transform.position.y;
 
+                if (floorGap > 0)
+                {
+                    GetComponent<Rigidbody2D>().velocity = new Vector3(0, jumpForce * 2, 0);
+                }
             }
         }
         Debug.Log("差" + (Camera.main.transform.position.y - floor.transform.position.y));
@@ -66,16 +71,31 @@ public class Player : MonoBehaviour
             isScaffold = false;
         }
 
-        else if(other.gameObject.tag == "Scaffold"　&& oldFloorPos != other.gameObject && newFloorPos.transform.y　> oldFloorPos.transform.y) 
+        //足場に触れた時に床が移動する
+        else if (other.gameObject.tag == "Scaffold" && oldFloor != other.gameObject && other.transform.position.y > oldFloorPos.y && other.transform.position.y < this.transform.position.y)
+        {
+            float upHalf;
+            jumpCount = 0;
+
+            //床の移動
+            upHalf = (other.transform.position.y - oldFloorPos.y) / 2;
+
+            Vector2 pos = new Vector2(floor.transform.position.x, floor.transform.position.y + upHalf);
+            floor.transform.position = pos;
+
+            //床の更新
+            oldFloorPos = other.transform.position;
+
+            //フラグを戻す
+            isScaffold = true;
+
+        }
+
+        if (other.gameObject.tag == "Scaffold")
         {
             jumpCount = 0;
             isScaffold = true;
-            if(isScaffold == true) 
-            {
 
-                isScaffold = false;
-            }
         }
-
     }
 }
