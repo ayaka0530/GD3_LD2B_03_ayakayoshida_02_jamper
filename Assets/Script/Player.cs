@@ -14,19 +14,21 @@ public class Player : MonoBehaviour
     public GameObject floor;
     public GameObject oldFloor;//前の床のゲームオブジェクト
     public Vector2 oldFloorPos;//前の床の位置
-
+    public FloorFollow floorFollw;
+    public float floorDistance;
+    public float stepOnCount;
 
     // Start is called before the first frame update
     void Start()
     {
         rbody2D = GetComponent<Rigidbody2D>();
+        floorFollw = GameObject.Find("Floor").GetComponent<FloorFollow>();
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector2 position = transform.position;
-
         if (Input.GetKey("left") || (Input.GetKey(KeyCode.A)))
         {
             position.x -= speed;
@@ -39,24 +41,29 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && this.jumpCount < 1)
         {
-            //this.rbody2D.AddForce(transform.up * jumpForce);
+            //this.rbody2D.AddForce(transfxorm.up * jumpForce);
             GetComponent<Rigidbody2D>().velocity = new Vector3(0, jumpForce, 0);
             jumpCount++;
 
+            //床についているとき
             if (isScaffold == false)
             {
-                float floorGap;
-                floorGap = Camera.main.transform.position.y - floor.transform.position.y;
+                float jumpPower = stepOnCount * jumpForce;
+                GetComponent<Rigidbody2D>().velocity = new Vector3(0, jumpPower + 25, 0);
 
-                if (floorGap > 0)
-                {
-                    GetComponent<Rigidbody2D>().velocity = new Vector3(0, jumpForce * 2, 0);
-                }
+                stepOnCount = 0;
+
+                //float floorGap;
+                //floorGap = floor.transform.position.y - Camera.main.transform.position.y;
+                //Debug.Log("floorGapの値" + floorGap);
+                //Debug.Log("jumpPowerの値" + jumpPower);
             }
         }
-        Debug.Log("差" + (Camera.main.transform.position.y - floor.transform.position.y));
-
+        //Debug.Log("差" + (Camera.main.transform.position.y - floor.transform.position.y));
+        Debug.Log("floorの位置" + floor.transform.position.y);
+        Debug.Log("cameraの位置" + Camera.main.transform.position.y);
         var pos = transform.position;
+
         //エリア指定して移動する
         //position.x = Mathf.Clamp(position.x, -7.33f, 6.5f);
         //position.y = Mathf.Clamp(position.y, -3.63f, 3.63f);
@@ -77,9 +84,10 @@ public class Player : MonoBehaviour
             float upHalf;
             jumpCount = 0;
 
-            //床の移動
+            //床の移動量
             upHalf = (other.transform.position.y - oldFloorPos.y) / 2;
 
+            //床の移動
             Vector2 pos = new Vector2(floor.transform.position.x, floor.transform.position.y + upHalf);
             floor.transform.position = pos;
 
@@ -95,7 +103,7 @@ public class Player : MonoBehaviour
         {
             jumpCount = 0;
             isScaffold = true;
-
+            stepOnCount++;
         }
     }
 }
