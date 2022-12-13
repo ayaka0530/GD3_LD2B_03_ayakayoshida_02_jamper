@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     private float speed = 0.05f;
     private int jumpCount = 0;
     private float jumpForce = 25f;
-
+    public AudioSource gameAudio;   // 音楽を再生するコンポーネント
 
     public bool isScaffold = false;//足場のフラグ
     public GameObject floor;
@@ -65,8 +65,8 @@ public class Player : MonoBehaviour
         var pos = transform.position;
 
         //エリア指定して移動する
-        //position.x = Mathf.Clamp(position.x, -7.33f, 6.5f);
-        //position.y = Mathf.Clamp(position.y, -3.63f, 3.63f);
+        //position.y = Mathf.Clamp(position.x, -7.33f, 6.5f);
+        position.x = Mathf.Clamp(position.x, -2.66f, 2.66f);
 
         transform.position = position;
     }
@@ -89,7 +89,7 @@ public class Player : MonoBehaviour
 
             //床の移動
             Vector2 pos = new Vector2(floor.transform.position.x, floor.transform.position.y + upHalf);
-            floor.transform.position = pos;
+            //floor.transform.position = pos;
 
             //床の更新
             oldFloorPos = other.transform.position;
